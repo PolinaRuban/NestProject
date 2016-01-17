@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Home</title>
+  <!--
+  Copyright 2014 Nest Labs Inc. All Rights Reserved.
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  -->
+    <link rel="stylesheet" href="/fonts/LCDBOLD/font.css">
+    <link rel="stylesheet" href="/stylesheets/homepage.css">
+    <link rel="stylesheet" href="/stylesheets/bootstrap/bootstrap.css">
+</head>
+<body>
+    <div class="nest-container">
+        <a href="https://nest.com/">
+            <div id="nest-image"></div>
+        </a>
+    </div>
+    </nav>
+    <div class="content">
+        <div class="nest-menu col-md-2">
+            <div class="icon-menu">
+                <!--<div id="menuButtons">
+                    <a id="menuBtn" class="menu-icon" title="Show/Hide main menu"></a>
+                </div>-->
+            </div>
+                <div class="nest-menu-container">
+                </div>
+        </div>
+        <div class="nest-menu col-md-10">
+            <div class="home">
+                <div class="home-name"></div>
+                <button type="button" id="homeaway" class="btn btn-xs btn-primary"></button>
+            </div>
+            <br/>
+            <div class=col-lg-12>
+                <div class="col-lg-12 devices">
+                    <div class="col-lg-4 thermostats">
+                    </div>
+                    <div class="col-lg-4 cameras">
+                    </div>
+                    <div class="col-lg-4 co-alarms">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="/bower_components/jquery/dist/jquery.js"></script>
+    <script src="/bower_components/underscore/underscore.js"></script>
+    <script src="/bower_components/jquery-cookie/jquery.cookie.js"></script>
+    <script src="/bower_components/firebase/firebase.js"></script>
+    <script src="/javascript/homepage.js"></script>
+</body>
