@@ -26,7 +26,7 @@ function updateThermostatView(thermostats){
     _.each(thermostats, function(thermostat){
         //$('.thermostats').append("<a href='/thermostat/thermostat.html'>" + thermostat.name + "</a><br/>");
         var temperature = getTemperature(thermostat);
-        $(".thermostats").append("<div class='thermostat' id=" + thermostat.device_id + ">" + thermostat.name + " " + temperature +  thermostat.temperature_scale + "</div>");
+        $(".thermostats").append("<div class='thermostat' id=" + thermostat.where_id + ">" + thermostat.name + " " + temperature +  thermostat.temperature_scale + "</div>");
         //delete and append class with thermostat
     });
 }
@@ -40,6 +40,11 @@ function getTemperature(thermostat){
 }
 
 function UpdateHomeView(homeId) {
+    $(".home").empty();
+    
+    $(".home").append("<label class='home-name'></label>");
+    $(".home").append("<div><button type='button' id='homeaway' class='btn btn-xs btn-primary''></button></div>");
+    
     var structure = structures[homeId];
     var name = structure.name;
     $('.home-name').text(name);
@@ -132,8 +137,9 @@ dataRef.on('value', function (snapshot) {
     
     var thermostats = data.devices.thermostats;
     
-    var structure = firstChild(structures);
-    UpdateHomeView(structure.structure_id);
+    //for initialization
+    /*var structure = firstChild(structures);
+    UpdateHomeView(structure.structure_id);*/
     
     UpdateMenu(getStructureIds(structures));
 });

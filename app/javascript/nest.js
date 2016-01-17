@@ -121,23 +121,33 @@ $('#cooling-down-button').on('click', function () {
   adjustTemperature(adjustment, scale, 'cool');
 });
 
-function firstChild(object) {
-  for(var key in object) {
-    return object[key];
-  }
-}
 
+var getUrlParameter = function getUrlParameter(sParam) {
+    var sPageURL = decodeURIComponent(window.location.search.substring(1)),
+        sURLVariables = sPageURL.split('&'),
+        sParameterName,
+        i;
+
+    for (i = 0; i < sURLVariables.length; i++) {
+        sParameterName = sURLVariables[i].split('=');
+
+        if (sParameterName[0] === sParam) {
+            return sParameterName[1] === undefined ? true : sParameterName[1];
+        }
+    }
+}
 
 dataRef.on('value', function (snapshot) {
   var data = snapshot.val();
-
+    var id = getUrlParameter("id");
   // For simplicity, we only care about the first
   // thermostat in the first structure
-  structure = firstChild(data.structures),
-  thermostat = data.devices.thermostats[structure.thermostats[0]];
-
-  // TAH-361, device_id does not match the device's path ID
-  thermostat.device_id = structure.thermostats[0];
+  _.each(data.devices.thermostats, function(item){
+      if(item.where_id == id){
+          thermostat = item;
+          structure = data.structures[item.structure_id];
+      }
+  })
 
   updateThermostatView(thermostat);
   updateStructureView(structure);
