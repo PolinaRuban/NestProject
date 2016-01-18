@@ -8,6 +8,10 @@
 .thermostats, .co-alarms, .cameras{
     display: none;
 }
+.home-name, .link-element, #ambient-temperature, .temperature-scale{
+    font-family: 'LCDBOLD';
+    color: #B4DEF6;
+}
 
 .nest-container {
     padding-right: 45%;
@@ -25,14 +29,10 @@
 }
 
 .home-name {
-    color: #B4DEF6;
-    font-family: 'LCDBOLD';
     font-size: 22px;
 }
 
 .link-element {
-    color: #B4DEF6;
-    font-family: 'LCDBOLD';
     height: 5rem; 
     width: 30rem;
     background-repeat: no-repeat;
@@ -73,5 +73,4 @@
     background-image: url("/images/icon_puck_thermostat_circle.png");
     height: 400px;
     background-repeat: no-repeat;
-    background-position: left;
 }

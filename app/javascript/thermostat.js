@@ -4,7 +4,7 @@
 var nestToken  = $.cookie('nest_token'),
     id = null,
     thermostat = {},
-    template = "<div id='screen'><div id='target-temperature' class='home'><div class='away'>away</div><div class='home'><span class='temp'></span><div class='hvac-mode'></div></div></div><div id='ambient-temperature'><span class='temp'></span><span class='temperature-scale'></span><span class='label'>inside</span></div></div><button id='up-button'>⬆</button><button id='down-button'>⬇︎</button><button id='heating-up-button'>⬆</button><button id='heating-down-button'>⬇︎</button><button id='cooling-up-button'>⬆</button><button id='cooling-down-button'>⬇︎</button><div id='door'><div id='device-name'></div></div>",
+    template = "<div id='screen'><div id='target-temperature' class='home'><div class='away'>away</div><div class='home'><span class='temp'></span><div class='hvac-mode'></div></div></div><div id='ambient-temperature'><span class='temp'></span><span class='temperature-scale'></span><span class='label'>inside</span></div></div><div class='button-list'><button class='btn btn-xs btn-primary' id='up-button'>⬆</button><button class='btn btn-xs btn-primary' id='down-button'>⬇︎</button><button class='btn btn-xs btn-primary' id='heating-up-button'>⬆</button><button class='btn btn-xs btn-primary' id='heating-down-button'>⬇︎</button><button class='btn btn-xs btn-primary' id='cooling-up-button'>⬆</button><button id='cooling-down-button'>⬇︎</button></div>",
     structure  = {};
 
 if (nestToken) { // Simple check for token
