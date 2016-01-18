@@ -36,9 +36,17 @@ function UpdateMenu(structuresIds){
 
 dataRef.on('value', function (snapshot) {
     structures = snapshot.child("structures").val();
-    
+    var ids = _getStructureIds(structures);
+    _checkCurrentStructureId(ids);
     UpdateMenu(_getStructureIds(structures));
 });
+
+function _checkCurrentStructureId(ids){
+    if(!_.contains(ids, currentStructureId)){
+        currentStructureId = null;
+    }
+}
+
 
 function _addLogoToMenu(num){
     var item = structureItemTemplate({id : num, 

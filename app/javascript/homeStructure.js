@@ -1,9 +1,7 @@
 'use strict';
 
 var nestToken  = $.cookie('nest_token'),
-    devices = {},
-    currentStructure = null,
-    structures  = {};
+    currentStructure = null;
 
 var templateForAwayStatus = _.template("<span class='text-status'>Away status:  </span><button type='button' id='homeaway' class='btn btn-xs btn-primary'></button>");
 var homeNameTemplate = _.template("<div><label class='home-name'></label></div>");

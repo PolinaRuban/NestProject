@@ -2,27 +2,14 @@
 'use strict';
 
 var nestToken  = $.cookie('nest_token'),
-    thermostatId = null,
     thermostat = {},
+    
     template = "<div id='screen'><div id='target-temperature' class='home'><div class='away'>away</div><div class='home'><span class='temp'></span><div class='hvac-mode'></div></div></div><div id='ambient-temperature'><span class='temp'></span><span class='temperature-scale'></span><span class='label'>inside</span></div></div><div class='button-list'><button class='btn btn-xs btn-primary' id='up-button'>⬆</button><button class='btn btn-xs btn-primary' id='down-button'>⬇︎</button><button class='btn btn-xs btn-primary' id='heating-up-button'>⬆</button><button class='btn btn-xs btn-primary' id='heating-down-button'>⬇︎</button><button class='btn btn-xs btn-primary' id='cooling-up-button'>⬆</button><button id='cooling-down-button'>⬇︎</button></div>",
     structure  = {};
-
-if (nestToken) { // Simple check for token
-
-  // Create a reference to the API using the provided token
-  var dataRef = new Firebase('wss://developer-api.nest.com');
-  dataRef.auth(nestToken);
-
-} else {
-  // No auth token, go get one
-  window.location.replace('/auth/nest');
-}
 
 function updateTemperatureDisplay (thermostat) {
   var scale = thermostat.temperature_scale.toLowerCase();
 
-  // For Heat • Cool mode, we display a range of temperatures
-  // we support displaying but not changing temps in this mode
   if (thermostat.hvac_mode === 'heat-cool') {
     $('#target-temperature .temp').text(
       thermostat['target_temperature_low_' + scale] + ' • ' +
@@ -53,7 +40,7 @@ function updateThermostatView(thermostat) {
 
 
 function updateStructureView (structure) {
-  if (structure.away === 'home') {
+  if (structures[currentStructureId].away === state.home) {
     $('#target-temperature').addClass('home');
   } else {
     $('#target-temperature').removeClass('home');
@@ -94,79 +81,90 @@ var getUrlParameter = function getUrlParameter(sParam) {
     }
 }
 
-function initializeThermostatView(whereId)
-{
+function initializeThermostatView(){
+    $(".thermostat-circle").show();
     $(".thermostat-circle").append(template);
-    thermostatId = whereId;
     
     dataRef.on('value', function (snapshot){
-        var data = snapshot.val();
+        var thermostats = snapshot.child("devices/thermostats").val();
+        
+        var ids = _getThermostatIds(thermostats);
+        _checkCurrentThermostatId(ids);
 
-        if(thermostatId != null){
-            getThermostatAndStructureByWhereId(data, thermostatId);
+        if(currentThermostatId != null){
+            thermostat = _getCurrentThermostat(thermostats);
+            
+            updateThermostatView(thermostat);
+
+            updateStructureView(structures[currentStructureId]);
         }
-
-      updateThermostatView(thermostat);
-      updateStructureView(structure);
+        else{
+            $(".thermostat-circle").hide();
+        }
+        
     });
     
     $('#up-button').on('click', function () {
         var scale = thermostat.temperature_scale,
             adjustment = scale === 'F' ? +1 : +0.5;
         adjustTemperature(adjustment, scale);
-});
+    });
 
-$('#down-button').on('click', function () {
-  var scale = thermostat.temperature_scale,
-      adjustment = scale === 'F' ? -1 : -0.5;
-  adjustTemperature(adjustment, scale);
-});
+    $('#down-button').on('click', function () {
+      var scale = thermostat.temperature_scale,
+          adjustment = scale === 'F' ? -1 : -0.5;
+      adjustTemperature(adjustment, scale);
+    });
 
-$('#heating-up-button-heat').on('click', function () {
-  var scale = thermostat.temperature_scale,
-      adjustment = scale === 'F' ? +1 : +0.5;
-  adjustTemperature(adjustment, scale, 'heat');
-});
+    $('#heating-up-button-heat').on('click', function () {
+      var scale = thermostat.temperature_scale,
+          adjustment = scale === 'F' ? +1 : +0.5;
+      adjustTemperature(adjustment, scale, 'heat');
+    });
 
-$('#heating-down-button').on('click', function () {
-  var scale = thermostat.temperature_scale,
-      adjustment = scale === 'F' ? -1 : -0.5;
-  adjustTemperature(adjustment, scale, 'heat');
-});
+    $('#heating-down-button').on('click', function () {
+      var scale = thermostat.temperature_scale,
+          adjustment = scale === 'F' ? -1 : -0.5;
+      adjustTemperature(adjustment, scale, 'heat');
+    });
 
-$('#cooling-up-button').on('click', function () {
-  var scale = thermostat.temperature_scale,
-      adjustment = scale === 'F' ? +1 : +0.5;
-  adjustTemperature(adjustment, scale, 'cool');
-});
+    $('#cooling-up-button').on('click', function () {
+      var scale = thermostat.temperature_scale,
+          adjustment = scale === 'F' ? +1 : +0.5;
+      adjustTemperature(adjustment, scale, 'cool');
+    });
 
-$('#cooling-down-button').on('click', function () {
-  var scale = thermostat.temperature_scale,
-      adjustment = scale === 'F' ? -1 : -0.5;
-  adjustTemperature(adjustment, scale, 'cool');
-});
+    $('#cooling-down-button').on('click', function () {
+      var scale = thermostat.temperature_scale,
+          adjustment = scale === 'F' ? -1 : -0.5;
+      adjustTemperature(adjustment, scale, 'cool');
+    });
     
 }
 
-function getThermostatAndStructureByWhereId(data, whereId){
-    if(whereId != undefined){
-        _.each(data.devices.thermostats, function(item){
-            if(item.where_id == thermostatId){
-                thermostat = item;
-                structure = data.structures[item.structure_id];
+function _checkCurrentThermostatId(ids){
+    if(!_.contains(ids, currentThermostatId)){
+        currentThermostatId = null;
+    }
+}
+
+function _getCurrentThermostat(thermodevices){
+    var result = null;
+    if(currentThermostatId != undefined){
+        _.each(thermodevices, function(item){
+            if(item.where_id == currentThermostatId){
+                result = item;
             }
         });
     }
+    return result;
 }
-    
-dataRef.on('value', function (snapshot){
-    var data = snapshot.val();
-    
-    if(thermostatId != null){
-        getThermostatAndStructureByWhereId(data, thermostatId);
-    
-        updateThermostatView(thermostat);
-        updateStructureView(structure);
-    }
 
-});
+function _getThermostatIds(object){
+    var ids = [];
+    for(var key in object) {
+        ids.push(object[key].where_id);
+    }
+    
+    return ids;
+}
