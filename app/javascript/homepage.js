@@ -52,6 +52,7 @@ function getTemperature(thermostat){
 
 function UpdateHomeView(homeId) {
     $(".home-container").empty();
+    $(".thermostat-view").empty();
     
     $(".home-container").append("<label class='home-name'></label>");
     $(".home-container").append("<button type='button' id='homeaway' class='btn btn-xs btn-primary''></button>");
