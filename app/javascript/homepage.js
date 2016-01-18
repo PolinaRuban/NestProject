@@ -3,20 +3,17 @@
 var nestToken  = $.cookie('nest_token'),
     devices = {},
     currentStructure = null,
-    
     structures  = {};
 
-if (nestToken) { // Simple check for token
+var templateForAwayStatus = _.template("<span class='text-status'>Away status:  </span><button type='button' id='homeaway' class='btn btn-xs btn-primary'></button>");
+var homeNameTemplate = _.template("<div><label class='home-name'></label></div>");
+var thermostatTemplateView = _.template("<div class='thermostat-circle'><div>");
 
-  // Create a reference to the API using the provided token
+if (nestToken) {
   var dataRef = new Firebase('wss://developer-api.nest.com');
   dataRef.auth(nestToken);
 
-  // in a production client we would want to
-  // handle auth errors here.
-
 } else {
-  // No auth token, go get one
   window.location.replace('/auth/nest');
 }
 
@@ -34,12 +31,12 @@ function updateThermostatLinkView(thermostats){
             temperature = "AWAY";
         }
         $(".thermostats").append("<div class='col-lg-12 thermostat' id=" + thermostat.where_id + ">" + thermostat.name + " " + temperature + "</div>");
-
+        
         $("#"+ thermostat.where_id).on('click', function(event){
             $(".thermostat-view").empty();
             $(".thermostat").removeClass("chosen");
             $("#" + event.target.id).addClass("chosen");
-            $(".thermostat-view").append("<div class='thermostat-circle'><div>");
+            $(".thermostat-view").append(thermostatTemplateView);
 
             var id = event.target.id;
             initializeThermostatView(id);
@@ -57,8 +54,8 @@ function getTemperature(thermostat){
 
 function UpdateHomeView(homeId) {
     $(".home-container").empty();
-    $(".home-container").append("<div><label class='home-name'></label></div>");
-    $(".home-container").append("<span class='text-status'>Away status:  </span><button type='button' id='homeaway' class='btn btn-xs btn-primary'></button>");
+    $(".home-container").append(homeNameTemplate);
+    $(".home-container").append(templateForAwayStatus);
     
     var structure = structures[homeId];
     var name = structure.name;
@@ -72,47 +69,39 @@ function UpdateHomeView(homeId) {
                thermostats.push(thermostat);
            } 
         });
-         updateThermostatLinkView(thermostats);
-    }
-    
-    if(devices.smoke_co_alarms != undefined){
-        $(".co-alarms").show();
-        var smokeCOAlarms = [];
-        _.each(devices.smoke_co_alarms, function(smokeCOAlarm){
-           if(smokeCOAlarm.structure_id == homeId){
-               smokeCOAlarms.push(smokeCOAlarm);
-           } 
-        });
-        updateCOAlarmsView(smokeCOAlarms);
-    }
-    
-    if(devices.cameras != undefined){
-        $(".cameras").show();
+        updateThermostatLinkView(thermostats);
+        updateHoverLink(thermostatId);
     }
     
     $("#homeaway").text(structure.away);
     
     
     $("#homeaway").on('click', function(event){
+        var path = 'structures/' + homeId + '/away';
+        
         if(event.target.textContent == "home"){
-            var path = 'structures/' + homeId + '/away';
             dataRef.child(path).set("away");
         }
         else{
-            if(event.target.textContent == "away" || event.target.textContent== "auto-away"){
-                var path = 'structures/' + homeId + '/away';
-                dataRef.child(path).set("home");
-            }
+            dataRef.child(path).set("home");
         }
-    })
+    });
+}
+
+function updateHoverLink(item){
+    if(item == thermostatId){
+        $("#" + item).addClass("chosen");
+    }
 }
 
 function UpdateMenu(structuresIds){
     if(currentStructure == null){
         currentStructure = structuresIds[0];
     }
-    $("nest-menu-container-title").append("<h3>Choose the home</h3>");
+    $(".nest-menu-container-title").empty();
+    $(".nest-menu-container-title").append("<h3>Choose the home</h3>");
     $('.nest-menu-container').empty();
+    
     _.each(structuresIds, function(num){
         $('.nest-menu-container').append("<div class='structure-item' id='" + num 
                                          + "'>" + "<div class='link-element'>" + 

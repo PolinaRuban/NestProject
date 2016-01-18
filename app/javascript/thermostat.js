@@ -2,7 +2,7 @@
 'use strict';
 
 var nestToken  = $.cookie('nest_token'),
-    id = null,
+    thermostatId = null,
     thermostat = {},
     template = "<div id='screen'><div id='target-temperature' class='home'><div class='away'>away</div><div class='home'><span class='temp'></span><div class='hvac-mode'></div></div></div><div id='ambient-temperature'><span class='temp'></span><span class='temperature-scale'></span><span class='label'>inside</span></div></div><div class='button-list'><button class='btn btn-xs btn-primary' id='up-button'>⬆</button><button class='btn btn-xs btn-primary' id='down-button'>⬇︎</button><button class='btn btn-xs btn-primary' id='heating-up-button'>⬆</button><button class='btn btn-xs btn-primary' id='heating-down-button'>⬇︎</button><button class='btn btn-xs btn-primary' id='cooling-up-button'>⬆</button><button id='cooling-down-button'>⬇︎</button></div>",
     structure  = {};
@@ -97,13 +97,13 @@ var getUrlParameter = function getUrlParameter(sParam) {
 function initializeThermostatView(whereId)
 {
     $(".thermostat-circle").append(template);
-    id = whereId;
+    thermostatId = whereId;
     
     dataRef.on('value', function (snapshot){
         var data = snapshot.val();
 
-        if(id != null){
-            getThermostatAndStructureByWhereId(data, id);
+        if(thermostatId != null){
+            getThermostatAndStructureByWhereId(data, thermostatId);
         }
 
       updateThermostatView(thermostat);
@@ -111,9 +111,9 @@ function initializeThermostatView(whereId)
     });
     
     $('#up-button').on('click', function () {
-  var scale = thermostat.temperature_scale,
-      adjustment = scale === 'F' ? +1 : +0.5;
-  adjustTemperature(adjustment, scale);
+        var scale = thermostat.temperature_scale,
+            adjustment = scale === 'F' ? +1 : +0.5;
+        adjustTemperature(adjustment, scale);
 });
 
 $('#down-button').on('click', function () {
@@ -134,12 +134,6 @@ $('#heating-down-button').on('click', function () {
   adjustTemperature(adjustment, scale, 'heat');
 });
 
-/**
-  When the user clicks the cooling up button,
-  adjust the temperature up 1 degree F
-  or 0.5 degrees C
-
-*/
 $('#cooling-up-button').on('click', function () {
   var scale = thermostat.temperature_scale,
       adjustment = scale === 'F' ? +1 : +0.5;
@@ -157,7 +151,7 @@ $('#cooling-down-button').on('click', function () {
 function getThermostatAndStructureByWhereId(data, whereId){
     if(whereId != undefined){
         _.each(data.devices.thermostats, function(item){
-            if(item.where_id == id){
+            if(item.where_id == thermostatId){
                 thermostat = item;
                 structure = data.structures[item.structure_id];
             }
@@ -168,8 +162,8 @@ function getThermostatAndStructureByWhereId(data, whereId){
 dataRef.on('value', function (snapshot){
     var data = snapshot.val();
     
-    if(id != null){
-        getThermostatAndStructureByWhereId(data, id);
+    if(thermostatId != null){
+        getThermostatAndStructureByWhereId(data, thermostatId);
     
         updateThermostatView(thermostat);
         updateStructureView(structure);
