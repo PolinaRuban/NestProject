@@ -9,10 +9,9 @@
     display: none;
 }
 
-
 .nest-container {
     padding-right: 45%;
-    padding-left: 45%;
+    padding-left: 4%;
     padding-top: 50px;
     background: linear-gradient(to bottom, #001122 0%, #052647  80%);
     position: relative;
@@ -26,11 +25,14 @@
 }
 
 .home-name {
-    color: #B4DEF6
+    color: #B4DEF6;
+    font-family: 'LCDBOLD';
+    font-size: 22px;
 }
 
 .link-element {
     color: #B4DEF6;
+    font-family: 'LCDBOLD';
     height: 5rem; 
     width: 30rem;
     background-repeat: no-repeat;
@@ -55,45 +57,21 @@
     background-repeat: no-repeat;
     background-size: 4rem;
 }
-.icon-menu{
-    height: 5rem; 
-    width: 5rem;
-}
 
-a#menuBtn {
-    width: 3rem;
-    height: 3rem;
-    float: left;
-    background-image: url("/images/menu.svg");
-    position: relative;
-    background-position: center;
-    background-repeat: no-repeat;
-    border-radius: 8px;
-}
-
-a#menuBtn:hover{
-    cursor: pointer; 
-    cursor: hand;    
-}
-
-div#menuButtons {
-    height: 3rem;
-    width: 3rem;
-    left: 3rem;
-    position: relative;
-    //background-color: red;
-    border-radius: 8px;
-    background-color: 
-}
 
 .thermostat{
-    color: white;
+    color: #B4DEF6;
+    font-family: 'LCDBOLD';
+    font-size: 16px;
+}
+.thermostat:hover{
+    cursor: pointer; 
+    cursor: hand;
 }
 
 .thermostat-circle{
     background-image: url("/images/icon_puck_thermostat_circle.png");
-    width:  100%;
     height: 400px;
     background-repeat: no-repeat;
-    background-position: center;
+    background-position: left;
 }

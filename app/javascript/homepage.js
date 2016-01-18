@@ -25,13 +25,15 @@ if (nestToken) { // Simple check for token
 
 function updateThermostatLinkView(thermostats){
     $('.thermostats').empty();
+    
     _.each(thermostats, function(thermostat){
-        var temperature = getTemperature(thermostat);
-        
-        $(".thermostats").append("<div class='thermostat' id=" + thermostat.where_id + ">" + thermostat.name + " " + temperature +  thermostat.temperature_scale + "</div>");
+        var temperature = getTemperature(thermostat) + thermostat.temperature_scale;
+        if(structures[thermostat.structure_id].away == "away"|| structures[thermostat.structure_id].away == "auto-away"){
+            temperature = "AWAY";
+        }
+        $(".thermostats").append("<div class='thermostat' id=" + thermostat.where_id + ">" + thermostat.name + " " + temperature + "</div>");
 
         $("#"+ thermostat.where_id).on('click', function(event){
-            $("thermostat-view").removeClass("hidden");
             $(".thermostat-view").empty();
             $(".thermostat-view").append("<div class='thermostat-circle'><div>");
 
@@ -52,10 +54,9 @@ function getTemperature(thermostat){
 
 function UpdateHomeView(homeId) {
     $(".home-container").empty();
-    $(".thermostat-view").empty();
     
     $(".home-container").append("<label class='home-name'></label>");
-    $(".home-container").append("<button type='button' id='homeaway' class='btn btn-xs btn-primary''></button>");
+    $(".home-container").append("<button type='button' id='homeaway' class='btn btn-xs btn-primary'></button>");
     
     var structure = structures[homeId];
     var name = structure.name;
@@ -127,6 +128,7 @@ function UpdateMenu(structuresIds){
         
         $("#" + num + " .link-element").on('click', function (event) {
             UpdateHomeView(num);
+            $(".thermostat-view").empty();
             currentStructure = num;
         });
     });
