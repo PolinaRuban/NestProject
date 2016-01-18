@@ -21,7 +21,8 @@ if (nestToken) { // Simple check for token
 }
 
 $("#logout").on('click', function(event){
-   alert("Log out"); 
+    dataRef.unauth();
+    window.location.replace('/auth/nest');
 });
 
 function updateThermostatLinkView(thermostats){
@@ -161,7 +162,7 @@ function getStructureIds(object)
 }
 
 dataRef.on('value', function (snapshot) {
-    
+    $(".loading").hide();
     var data = snapshot.val();
     
     structures = data.structures;

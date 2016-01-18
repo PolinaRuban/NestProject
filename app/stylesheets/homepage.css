@@ -1,3 +1,9 @@
+.loading {
+    position: inherit;
+    top: 15%;
+    left: 43%;
+}
+
 .content{
     background: linear-gradient(to bottom, #052647 10%, #5d6972 90%);
     position: absolute;
