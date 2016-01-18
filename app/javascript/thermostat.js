@@ -2,7 +2,9 @@
 'use strict';
 
 var nestToken  = $.cookie('nest_token'),
+    id = null,
     thermostat = {},
+    template = "<div id='screen'><div id='target-temperature' class='home'><div class='away'>away</div><div class='home'><span class='temp'></span><div class='hvac-mode'></div></div></div><div id='ambient-temperature'><span class='temp'></span><span class='temperature-scale'></span><span class='label'>inside</span></div></div><button id='up-button'>⬆</button><button id='down-button'>⬇︎</button><button id='heating-up-button'>⬆</button><button id='heating-down-button'>⬇︎</button><button id='cooling-up-button'>⬆</button><button id='cooling-down-button'>⬇︎</button><div id='door'><div id='device-name'></div></div>",
     structure  = {};
 
 if (nestToken) { // Simple check for token
@@ -46,7 +48,6 @@ function updateThermostatView(thermostat) {
 
   $('.temperature-scale').text(scale);
   $('#target-temperature .hvac-mode').text(thermostat.hvac_mode);
-  $('#device-name').text(thermostat.name);
   updateTemperatureDisplay(thermostat);
 }
 
@@ -78,8 +79,38 @@ function adjustTemperature(degrees, scale, type) {
   }
 }
 
+var getUrlParameter = function getUrlParameter(sParam) {
+    var sPageURL = decodeURIComponent(window.location.search.substring(1)),
+        sURLVariables = sPageURL.split('&'),
+        sParameterName,
+        i;
 
-$('#up-button').on('click', function () {
+    for (i = 0; i < sURLVariables.length; i++) {
+        sParameterName = sURLVariables[i].split('=');
+
+        if (sParameterName[0] === sParam) {
+            return sParameterName[1] === undefined ? true : sParameterName[1];
+        }
+    }
+}
+
+function initializeThermostatView(whereId)
+{
+    $(".thermostat-circle").append(template);
+    id = whereId;
+    
+    dataRef.on('value', function (snapshot){
+        var data = snapshot.val();
+
+        if(id != null){
+            getThermostatAndStructureByWhereId(data, id);
+        }
+
+      updateThermostatView(thermostat);
+      updateStructureView(structure);
+    });
+    
+    $('#up-button').on('click', function () {
   var scale = thermostat.temperature_scale,
       adjustment = scale === 'F' ? +1 : +0.5;
   adjustTemperature(adjustment, scale);
@@ -120,37 +151,28 @@ $('#cooling-down-button').on('click', function () {
       adjustment = scale === 'F' ? -1 : -0.5;
   adjustTemperature(adjustment, scale, 'cool');
 });
-
-
-var getUrlParameter = function getUrlParameter(sParam) {
-    var sPageURL = decodeURIComponent(window.location.search.substring(1)),
-        sURLVariables = sPageURL.split('&'),
-        sParameterName,
-        i;
-
-    for (i = 0; i < sURLVariables.length; i++) {
-        sParameterName = sURLVariables[i].split('=');
-
-        if (sParameterName[0] === sParam) {
-            return sParameterName[1] === undefined ? true : sParameterName[1];
-        }
-    }
+    
 }
 
-dataRef.on('value', function (snapshot) {
-  var data = snapshot.val();
-    var id = getUrlParameter("id");
-  // For simplicity, we only care about the first
-  // thermostat in the first structure
-  _.each(data.devices.thermostats, function(item){
-      if(item.where_id == id){
-          thermostat = item;
-          structure = data.structures[item.structure_id];
-      }
-  })
-
-  updateThermostatView(thermostat);
-  updateStructureView(structure);
+function getThermostatAndStructureByWhereId(data, whereId){
+    if(whereId != undefined){
+        _.each(data.devices.thermostats, function(item){
+            if(item.where_id == id){
+                thermostat = item;
+                structure = data.structures[item.structure_id];
+            }
+        });
+    }
+}
+    
+dataRef.on('value', function (snapshot){
+    var data = snapshot.val();
+    
+    if(id != null){
+        getThermostatAndStructureByWhereId(data, id);
+    
+        updateThermostatView(thermostat);
+        updateStructureView(structure);
+    }
 
 });
-

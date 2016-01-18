@@ -2,8 +2,10 @@
 
 var nestToken  = $.cookie('nest_token'),
     devices = {},
+    currentStructure = null,
     //cameras ={},
     //smokeCOAlarms={},
+    
     structures  = {};
 
 if (nestToken) { // Simple check for token
@@ -21,13 +23,22 @@ if (nestToken) { // Simple check for token
 }
 
 
-function updateThermostatView(thermostats){
+function updateThermostatLinkView(thermostats){
     $('.thermostats').empty();
     _.each(thermostats, function(thermostat){
-        //$('.thermostats').append("<a href='/thermostat/thermostat.html'>" + thermostat.name + "</a><br/>");
         var temperature = getTemperature(thermostat);
+        
         $(".thermostats").append("<div class='thermostat' id=" + thermostat.where_id + ">" + thermostat.name + " " + temperature +  thermostat.temperature_scale + "</div>");
-        //delete and append class with thermostat
+
+        $("#"+ thermostat.where_id).on('click', function(event){
+            $("thermostat-view").removeClass("hidden");
+            $(".thermostat-view").empty();
+            $(".thermostat-view").append("<div class='thermostat-circle'><div>");
+
+            var id = event.target.id;
+            
+            initializeThermostatView(id);
+        });
     });
 }
 
@@ -40,10 +51,10 @@ function getTemperature(thermostat){
 }
 
 function UpdateHomeView(homeId) {
-    $(".home").empty();
+    $(".home-container").empty();
     
-    $(".home").append("<label class='home-name'></label>");
-    $(".home").append("<div><button type='button' id='homeaway' class='btn btn-xs btn-primary''></button></div>");
+    $(".home-container").append("<label class='home-name'></label>");
+    $(".home-container").append("<button type='button' id='homeaway' class='btn btn-xs btn-primary''></button>");
     
     var structure = structures[homeId];
     var name = structure.name;
@@ -57,7 +68,7 @@ function UpdateHomeView(homeId) {
                thermostats.push(thermostat);
            } 
         });
-        updateThermostatView(thermostats);
+         updateThermostatLinkView(thermostats);
     }
     
     if(devices.smoke_co_alarms != undefined){
@@ -93,10 +104,14 @@ function UpdateHomeView(homeId) {
 }
 
 function UpdateMenu(structuresIds){
+    if(currentStructure == null){
+        currentStructure = structuresIds[0];
+    }
     $('.nest-menu-container').empty();
     _.each(structuresIds, function(num){
-
-        $('.nest-menu-container').append("<div class='structure-item' id='" + num + "'>" + "<div class='link-element'>" + structures[num].name + "</div></div>");   
+        $('.nest-menu-container').append("<div class='structure-item' id='" + num 
+                                         + "'>" + "<div class='link-element'>" + 
+                                         structures[num].name + "</div></div>");   
         
         if(structures[num].away == "home"){
               $("#" + num).addClass("homelogo");  
@@ -105,8 +120,13 @@ function UpdateMenu(structuresIds){
               $("#"+ num).addClass("awaylogo");  
         }
         
+        if(num == currentStructure){
+            UpdateHomeView(num);
+        }
+        
         $("#" + num + " .link-element").on('click', function (event) {
             UpdateHomeView(num);
+            currentStructure = num;
         });
     });
 }
@@ -137,16 +157,5 @@ dataRef.on('value', function (snapshot) {
     
     var thermostats = data.devices.thermostats;
     
-    //for initialization
-    /*var structure = firstChild(structures);
-    UpdateHomeView(structure.structure_id);*/
-    
     UpdateMenu(getStructureIds(structures));
 });
-
-/*$("#menuBtn").bind('click', $.proxy(this.menuButtonClickEventHandler, this));
-
-menuButtonClickEventHandler: function (self, callback) {
-    $().toggleClass('open');
-    $().find('.panel').removeClass('open');
-}*/
