@@ -7,17 +7,40 @@
 
 .thermostats, .co-alarms, .cameras{
     display: none;
+    padding-left: 0px !important;
 }
-.home-name, .link-element, #ambient-temperature, .temperature-scale{
+
+.home-name, .link-element, #logout, .thermostat, .nest-menu-container-title, .text-status{
+    color: #B4DEF6;
+    font-family: "Rokkitt";
+    font-size: 16pt;
+}
+
+.text-status{
+    color: #B4DEF6;
+    font-family: "Rokkitt";
+    font-size: 12pt;    
+}
+.nest-menu-container-title{
+    padding-left: 60px;
+}
+
+#ambient-temperature, .temperature-scale{
     font-family: 'LCDBOLD';
     color: #B4DEF6;
 }
 
+#logout {
+    float: left;
+    width: 95%;
+    text-align: right;
+}
+
 .nest-container {
-    padding-right: 45%;
-    padding-left: 4%;
+    /* padding-right: 45%; */
+    padding-left: 65px;
     padding-top: 50px;
-    background: linear-gradient(to bottom, #001122 0%, #052647  80%);
+    background: linear-gradient(to bottom, #001122 0%, #052647 80%);
     position: relative;
 }
 
@@ -28,8 +51,14 @@
     background-repeat: no-repeat;
 }
 
+.home-container{
+    padding-left: 0px !important;
+    padding-bottom: 20px;
+}
+
 .home-name {
     font-size: 22px;
+    padding-top: 25px;
 }
 
 .link-element {
@@ -44,10 +73,23 @@
 .link-element:hover{
     cursor: pointer; 
     cursor: hand;
+    color: white
 }
 
 .homelogo{
     background-image: url("/images/house.svg");
+    background-repeat: no-repeat;
+    background-size: 4rem;
+}
+
+.homelogo:hover{
+    background-image: url("/images/houseonhover.svg");
+    background-repeat: no-repeat;
+    background-size: 4rem;
+}
+
+.homelogo.chosen{
+    background-image: url("/images/houseonhover.svg");
     background-repeat: no-repeat;
     background-size: 4rem;
 }
@@ -58,19 +100,40 @@
     background-size: 4rem;
 }
 
-
-.thermostat{
-    color: #B4DEF6;
-    font-family: 'LCDBOLD';
-    font-size: 16px;
+.awaylogo:hover{
+    background-image: url("/images/humanonhover.svg");
+    background-repeat: no-repeat;
+    background-size: 4rem;
 }
-.thermostat:hover{
+
+.awaylogo.chosen{
+    background-image: url("/images/humanonhover.svg");
+    background-repeat: no-repeat;
+    background-size: 4rem;
+}
+
+.thermostat {
+    font-size: 14pt;
+    padding-top: 8px;
+    padding-bottom: 8px;
+    background-image: url("/images/leaf.svg");
+    background-repeat: no-repeat;
+    background-size: 15px;
+    background-position: left;
+}
+
+.thermostat:hover, #logout:hover{
     cursor: pointer; 
     cursor: hand;
+    color: white;
 }
 
 .thermostat-circle{
     background-image: url("/images/icon_puck_thermostat_circle.png");
     height: 400px;
     background-repeat: no-repeat;
+}
+
+.chosen {
+    color: white;
 }

@@ -3,8 +3,6 @@
 var nestToken  = $.cookie('nest_token'),
     devices = {},
     currentStructure = null,
-    //cameras ={},
-    //smokeCOAlarms={},
     
     structures  = {};
 
@@ -22,6 +20,9 @@ if (nestToken) { // Simple check for token
   window.location.replace('/auth/nest');
 }
 
+$("#logout").on('click', function(event){
+   alert("Log out"); 
+});
 
 function updateThermostatLinkView(thermostats){
     $('.thermostats').empty();
@@ -31,14 +32,15 @@ function updateThermostatLinkView(thermostats){
         if(structures[thermostat.structure_id].away == "away"|| structures[thermostat.structure_id].away == "auto-away"){
             temperature = "AWAY";
         }
-        $(".thermostats").append("<div class='thermostat' id=" + thermostat.where_id + ">" + thermostat.name + " " + temperature + "</div>");
+        $(".thermostats").append("<div class='col-lg-12 thermostat' id=" + thermostat.where_id + ">" + thermostat.name + " " + temperature + "</div>");
 
         $("#"+ thermostat.where_id).on('click', function(event){
             $(".thermostat-view").empty();
+            $(".thermostat").removeClass("chosen");
+            $("#" + event.target.id).addClass("chosen");
             $(".thermostat-view").append("<div class='thermostat-circle'><div>");
 
             var id = event.target.id;
-            
             initializeThermostatView(id);
         });
     });
@@ -54,9 +56,8 @@ function getTemperature(thermostat){
 
 function UpdateHomeView(homeId) {
     $(".home-container").empty();
-    
-    $(".home-container").append("<label class='home-name'></label>");
-    $(".home-container").append("<button type='button' id='homeaway' class='btn btn-xs btn-primary'></button>");
+    $(".home-container").append("<div><label class='home-name'></label></div>");
+    $(".home-container").append("<span class='text-status'>Away status:  </span><button type='button' id='homeaway' class='btn btn-xs btn-primary'></button>");
     
     var structure = structures[homeId];
     var name = structure.name;
@@ -109,6 +110,7 @@ function UpdateMenu(structuresIds){
     if(currentStructure == null){
         currentStructure = structuresIds[0];
     }
+    $("nest-menu-container-title").append("<h3>Choose the home</h3>");
     $('.nest-menu-container').empty();
     _.each(structuresIds, function(num){
         $('.nest-menu-container').append("<div class='structure-item' id='" + num 
@@ -124,9 +126,16 @@ function UpdateMenu(structuresIds){
         
         if(num == currentStructure){
             UpdateHomeView(num);
+            $("#" + num).addClass("chosen");
+            $("#" + num + " .link-element").addClass("chosen");
         }
         
         $("#" + num + " .link-element").on('click', function (event) {
+            $(".link-element").removeClass("chosen");
+            $(".structure-item").removeClass("chosen");
+            
+            $("#" + num).addClass("chosen");
+            $("#" + num + " .link-element").addClass("chosen");
             UpdateHomeView(num);
             $(".thermostat-view").empty();
             currentStructure = num;
