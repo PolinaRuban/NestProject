@@ -4,8 +4,7 @@
 var nestToken  = $.cookie('nest_token'),
     thermostat = {},
     
-    template = "<div id='screen'><div id='target-temperature' class='home'><div class='away'>away</div><div class='home'><span class='temp'></span><div class='hvac-mode'></div></div></div><div id='ambient-temperature'><span class='temp'></span><span class='temperature-scale'></span><span class='label'>inside</span></div></div><div class='button-list'><button class='btn btn-xs btn-primary' id='up-button'>⬆</button><button class='btn btn-xs btn-primary' id='down-button'>⬇︎</button><button class='btn btn-xs btn-primary' id='heating-up-button'>⬆</button><button class='btn btn-xs btn-primary' id='heating-down-button'>⬇︎</button><button class='btn btn-xs btn-primary' id='cooling-up-button'>⬆</button><button id='cooling-down-button'>⬇︎</button></div>",
-    structure  = {};
+    template = "<div id='screen'><div id='target-temperature' class='home'><div class='away'>away</div><div class='home'><span class='temp'></span><div class='hvac-mode'></div></div></div><div id='ambient-temperature'><span class='temp'></span><span class='temperature-scale'></span><span class='label'>inside</span></div></div><div class='button-list'><button class='btn btn-xs btn-primary' id='up-button'>⬆</button><button class='btn btn-xs btn-primary' id='down-button'>⬇︎</button><button class='btn btn-xs btn-primary' id='heating-up-button'>⬆</button><button class='btn btn-xs btn-primary' id='heating-down-button'>⬇︎</button><button class='btn btn-xs btn-primary' id='cooling-up-button'>⬆</button><button id='cooling-down-button'>⬇︎</button></div>";
 
 function updateTemperatureDisplay (thermostat) {
   var scale = thermostat.temperature_scale.toLowerCase();
@@ -59,7 +58,7 @@ function adjustTemperature(degrees, scale, type) {
     console.error("Can't adjust target temperature while in Heat • Cool mode, use target_temperature_high/low instead.");
   } else if (type && thermostat.hvac_mode !== 'heat-cool') {
     console.error("Can't adjust target temperature " + type + " while in " + thermostat.hvac_mode +  " mode, use target_temperature instead.");
-  } else if (structure.away.indexOf('away') > -1) {
+  } else if (structures[currentStructureId].away.indexOf('away') > -1) {
     console.error("Can't adjust target temperature while structure is set to Away or Auto-away.");
   } else { // ok to set target temperature
     dataRef.child(path).set(newTemp);
